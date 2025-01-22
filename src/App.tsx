@@ -24,6 +24,10 @@ const NAVIGATION: Navigation = [
     segment: "inputStory",
     title: "Inputs",
   },
+  {
+    segment: "imagesStory",
+    title: "Images",
+  },
 ];
 
 const BRANDING = {
