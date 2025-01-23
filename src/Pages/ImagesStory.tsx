@@ -3,9 +3,11 @@ import { DataGrid } from "@mui/x-data-grid";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { FileUploader } from "react-drag-drop-files";
-import { BiTrash } from "react-icons/bi";
+import { BiDownload, BiTrash } from "react-icons/bi";
 
 const ImagesStory = () => {
+  const userRole = localStorage.getItem("userRole") || "guest";
+
   const { data, refetch } = useQuery({
     queryKey: ["GET_ALL_IMAGES"],
     queryFn: () =>
@@ -31,7 +33,6 @@ const ImagesStory = () => {
     },
   });
 
-  console.log("🚀 ~ ImagesStory ~ data:", data?.data);
   return (
     <Grid2 container spacing={1}>
       <Grid2
@@ -43,26 +44,67 @@ const ImagesStory = () => {
         <FileUploader
           multiple={true}
           handleChange={(file: any) => {
-            console.log("file", file);
             const formData = new FormData();
             formData.append("file", file[0]);
             mutate(formData);
           }}
           name="file"
-          types={["JPEG", "PNG", "GIF"]}
+          types={[
+            "JPEG",
+            "PNG",
+            "GIF",
+            "PDF",
+            "DOCX",
+            "DOC",
+            "XLSX",
+            "XLS",
+            "PPTX",
+            "PPT",
+            "TXT",
+            "CSV",
+            "MP4",
+            "MP3",
+            "AVI",
+            "MKV",
+            "FLV",
+            "MOV",
+            "WMV",
+            "WEBM",
+            "OGG",
+            "WAV",
+            "FLAC",
+            "MPG",
+            "MPEG",
+            "M4V",
+            "3GP",
+            "3G2",
+            "WEBP",
+            "JPG",
+            "JSON",
+          ]}
         />
       </Grid2>
       <Grid2 size={12}>
         <TableContainer>
           <DataGrid
             rows={data?.data || []}
+            paginationMode="client"
+            pageSizeOptions={[10, 100, 1000]}
             columns={[
+              {
+                field: "fileImage",
+                renderCell: (params) => {
+                  return (
+                    <img src={params.row.file} width={40} height={"auto"} />
+                  );
+                },
+              },
               {
                 field: "file",
                 flex: 1,
                 renderCell: (params) => {
                   return (
-                    <img src={params.row.file} width={40} height={"auto"} />
+                    <div>{params.row.file.split("/").pop().split("?")[0]}</div>
                   );
                 },
               },
@@ -73,14 +115,22 @@ const ImagesStory = () => {
                 flex: 1,
                 renderCell: (params) => {
                   return (
-                    <IconButton
-                      color="error"
-                      onClick={() => {
-                        handleDelete(params.row.id);
-                      }}
-                    >
-                      <BiTrash />
-                    </IconButton>
+                    <div>
+                      {userRole === "admin" && (
+                        <IconButton
+                          color="error"
+                          disabled={userRole !== "admin"}
+                          onClick={() => {
+                            handleDelete(params.row.id);
+                          }}
+                        >
+                          <BiTrash />
+                        </IconButton>
+                      )}
+                      <IconButton href={params.row.file} target="_blank">
+                        <BiDownload />
+                      </IconButton>
+                    </div>
                   );
                 },
               },
