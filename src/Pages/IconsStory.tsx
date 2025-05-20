@@ -1182,7 +1182,7 @@ const IconStory = () => {
                       <IconButton
                         onClick={() => {
                           navigator.clipboard.writeText(
-                            `<${d.name} size={18} />`,
+                            `<${d.name} width={16} height={16} />`,
                           );
                         }}
                       >
